@@ -424,6 +424,16 @@ impl ClientOptions {
             channel
         };
         // If there is a proxy, we have to connect that way
+        debug!(
+            "http_connect_proxy: {}",
+            self.http_connect_proxy.as_ref().map(|proxy| {
+                format!(
+                    "HttpConnectProxyOptions {{ target_addr: {}, basic_auth: {:?} }}",
+                    proxy.target_addr,
+                    proxy.basic_auth.as_ref().map(|(user, _)| user) // Only log the username part of basic_auth
+                )
+            }).unwrap_or_else(|| "None".to_string())
+        );
         let channel = if let Some(proxy) = self.http_connect_proxy.as_ref() {
             proxy.connect_endpoint(&channel).await?
         } else {
